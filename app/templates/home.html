@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Welcome {{ user.first_name }}!</h1>
+
+<hr>
+
+<div>
+{% if open_instances %}
+<h4>Submit a chore</h3>
+    <form action="{% url 'submit_chore_instance' %}" method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="instance" class="sr-only">Chore instance</label>
+            <select name="instance" id="instance" class="form-control">
+                {% for x in open_instances %}
+                <option value="{{ x.id }}">{{ x.chore.name }} - {{ x.due_date }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="notes" class="sr-only">Notes</label>
+            <input name="notes" id="notes" class="form-control" placeholder="Notes">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+{% else %}
+<h4>No chores available for submission</h4>
+{% endif %}
+</div>
+<hr>
+
+<div>
+<h4>Your chores</h3>
+<ul>
+    {% for chore in chores %}
+    <li>
+       {{ chore.name }}
+    </li>
+    {% endfor %}
+</ul>
+    
+</div>
+<hr>
+
+<div>
+<h4>Recent submissions</h3>
+<ul>
+    {% for instance in recent_submissions %}
+    <li>
+        {{ instance.chore.name }}, due {{ instance.due_date }}
+    </li>
+    {% endfor %}
+</ul>
+    
+</div>
+<hr>
+
+{% endblock %}

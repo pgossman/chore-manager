@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Chore, ChoreInstance
+
+admin.site.register(Chore)
+admin.site.register(ChoreInstance)

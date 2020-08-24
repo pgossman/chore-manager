@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>worm</title>
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    </head>
+    <body>
+        {% if messages %}
+        <div class="container rounded">
+            {% for message in messages %}
+            <div 
+            {% if "error" in message.tags %}
+                class="alert alert-danger"
+            {% else %}
+                class="alert alert-{{ message.tags }}"
+            {% endif %}
+            >
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="container rounded">
+            {% block content %}{% endblock %}
+        </div>
+
+        {% if user.is_authenticated %}
+        <div class="container rounded">
+            <a class="btn btn-danger btn-sm" href="{% url 'logout' %}?next=/">Logout</a>
+        </div>
+        {% endif %}
+    </body>
+</html>
