@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div>
+    {% if not unreviewed_instances %}
+    <h3>There is nothing to be reviewed!</h3> 
+    {% else %}
+
+    <h3>Instances to be reviewed</h3> 
+
+    <form action="{% url 'submit_worm_verdict' %}" method="post">
+        {% csrf_token %}
+
+        {% for instance in unreviewed_instances %}
+        <ul>
+            <li>Name: {{ instance.user.first_name }} {{ instance.user.last_name }}</li>
+            <li>Chore: {{ instance.chore.name }}</li>
+            <li>Due: {{ instance.due_date }}</li>
+            <li>Submitted: {{ instance.submission_date }}</li>
+            <li>Photos: TODO</li>
+        </ul>
+
+
+        <input type="radio" name="verdict{{ instance.id }}" id="verdict-approve-{{ forloop.counter }}" value="approve">
+        <label for="verdict-approve-{{ forloop.counter }}">Approve</label>
+
+        <input type="radio" name="verdict{{ instance.id }}" id="verdict-reject-{{ forloop.counter }}" value="reject">
+        <label for="verdict-reject-{{ forloop.counter }}">Reject</label>
+
+        <input type="radio" name="verdict{{ instance.id }}" id="verdict-nothing-{{ forloop.counter }}" value="nothing" checked="checked">
+        <label for="verdict-nothing-{{ forloop.counter }}">Do Nothing</label>
+
+        <hr>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    {% endif %}
+
+</div>
+
+{% endblock %}

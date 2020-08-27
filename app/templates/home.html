@@ -34,11 +34,11 @@
 <hr>
 
 <div>
-<h4>Your chores</h3>
+<h4>Your weekly chore schedule</h3>
 <ul>
-    {% for chore in chores %}
+    {% for assignment in assignments %}
     <li>
-       {{ chore.name }}
+       {{ assignment }}
     </li>
     {% endfor %}
 </ul>
@@ -51,7 +51,7 @@
 <ul>
     {% for instance in recent_submissions %}
     <li>
-        {{ instance.chore.name }}, due {{ instance.due_date }}
+        {{ instance.assignment }}, due {{ instance.due_date }}
     </li>
     {% endfor %}
 </ul>
