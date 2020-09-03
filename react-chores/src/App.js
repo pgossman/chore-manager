@@ -6,7 +6,6 @@ class App extends Component {
   render() {
     return (
         <div className="App">
-          {/*  insert JSX here */}
           <ChoresClass/>
         </div>
     );
