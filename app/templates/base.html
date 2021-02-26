@@ -27,9 +27,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/admin">Admin</a>
                     </li>
+                    {% if user.is_staff %}
                     <li class="nav-item">
                         <a class="nav-link" href="/worm/review">Review</a>
                     </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'logout' %}?next=/">Logout</a>
                     </li>
@@ -38,6 +40,9 @@
             </div>
         </nav>
 
+        <div class="container rounded">
+        <div class="alert alert-info"> Hi {{ user.get_username }}</div>
+        </div>
 
         {% if messages %}
         <div class="container rounded">
