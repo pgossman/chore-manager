@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
@@ -61,6 +62,51 @@ class ChoreAssignment(models.Model):
 
         return f"{self.chore.name} {DayOfWeek(self.dow).label}{time_str}"
 
+    def create_instance(self, user):
+        ChoreInstance.objects.create(
+            user=user,
+            assignment=self,
+            status=ChoreStatus.ASSIGNED,
+            due_date=self.next_due_date(),
+        )
+
+    def next_due_date(self):
+        def to_weekday(dow):
+            return {
+                DayOfWeek.MONDAY: 0,
+                DayOfWeek.TUESDAY: 1,
+                DayOfWeek.WEDNESDAY: 2,
+                DayOfWeek.THURSDAY: 3,
+                DayOfWeek.FRIDAY: 4,
+                DayOfWeek.SATURDAY: 5,
+                DayOfWeek.SUNDAY: 6,
+            }[dow]
+
+        def to_time(time):
+            return {
+                PartOfDay.MORNING: datetime.timedelta(hours=16),
+                PartOfDay.AFTERNOON: datetime.timedelta(hours=20),
+                PartOfDay.EVENING: datetime.timedelta(hours=23, minutes=59),
+                PartOfDay.ANY: datetime.timedelta(hours=23, minutes=59),
+            }[time]
+
+        result = datetime.datetime.now()
+
+        # Set time
+        result = result.replace(hour=0, minute=0, second=0, microsecond=0)
+        result += to_time(self.time)
+
+        # Set day to next weekday
+        dow = to_weekday(self.dow)
+        days_ahead = result.weekday() - dow
+        if days_ahead < 0:
+            days_ahead *= -1
+        else:
+            days_ahead = 7 - days_ahead
+        result += datetime.timedelta(days=days_ahead)
+
+        return result
+
 
 class ChoreInstance(models.Model):
     """A date-specific instance of a chore assignment.
@@ -74,14 +120,16 @@ class ChoreInstance(models.Model):
 
     assignment = models.ForeignKey(ChoreAssignment, on_delete=models.CASCADE)
     status = models.CharField(max_length=1, choices=ChoreStatus.choices)
-
     due_date = models.DateTimeField()
-    submission_date = models.DateTimeField(default=None, null=True)
 
-    notes = models.CharField(max_length=5000, default="")
+    # Datetime that a user submits an instance for review to worms
+    submission_date = models.DateTimeField(default=None, null=True, blank=True)
+
+    # Notes from user made on submission
+    notes = models.CharField(max_length=5000, default="", blank=True)
 
     def __str__(self):
-        return f"{self.user.first_name} - {self.assignment.chore.name} - Due: {self.due_date}"
+        return f"{self.user.first_name} - {self.assignment.chore.name} - {self.status} - Due: {self.due_date}"
 
 
 class Photo(models.Model):

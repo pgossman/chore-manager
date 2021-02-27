@@ -74,10 +74,6 @@ def submit_worm_verdict(request):
     if not request.POST:
         return response
 
-    import pdb
-
-    pdb.set_trace()
-
     verdicts = {
         int(k.replace("verdict", "")): v
         for k, v in request.POST.items()
