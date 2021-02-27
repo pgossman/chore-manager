@@ -15,7 +15,9 @@
             <label for="instance" class="sr-only">Chore instance</label>
             <select name="instance" id="instance" class="form-control">
                 {% for x in open_instances %}
-                <option value="{{ x.id }}">{{ x.chore.name }} - {{ x.due_date }}</option>
+                <option value="{{ x.id }}">
+                    {{ x }}
+                </option>
                 {% endfor %}
             </select>
         </div>
@@ -51,7 +53,7 @@
 <ul>
     {% for instance in recent_submissions %}
     <li>
-        {{ instance.assignment }}, due {{ instance.due_date }}
+        {{ instance }}
     </li>
     {% endfor %}
 </ul>

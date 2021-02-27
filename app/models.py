@@ -55,12 +55,7 @@ class ChoreAssignment(models.Model):
     time = models.CharField(max_length=1, choices=PartOfDay.choices)
 
     def __str__(self):
-        if self.time == PartOfDay.ANY:
-            time_str = ""
-        else:
-            time_str = f" {PartOfDay(self.time).label}"
-
-        return f"{self.chore.name} {DayOfWeek(self.dow).label}{time_str}"
+        return f"{DayOfWeek(self.dow).label} {PartOfDay(self.time).label} - {self.chore.name}"
 
     def create_instance(self, user):
         ChoreInstance.objects.create(
@@ -128,8 +123,23 @@ class ChoreInstance(models.Model):
     # Notes from user made on submission
     notes = models.CharField(max_length=5000, default="", blank=True)
 
+    def to_str(self, assignment=True, user=False):
+        user_str = f"{self.user} - "
+        name_str = f"{self.assignment.chore.name} - "
+        assignment_str = f"{ChoreStatus(self.status).label} -"
+        due_str = self.due_date.strftime("%m/%d/%Y %-I %p")
+        due_str = f" Due: {due_str}"
+
+        if user:
+            name_str = user_str + name_str
+
+        if assignment:
+            return name_str + assignment_str + due_str
+        else:
+            return name_str + due_str
+
     def __str__(self):
-        return f"{self.user.first_name} - {self.assignment.chore.name} - {self.status} - Due: {self.due_date}"
+        return self.to_str()
 
 
 class Photo(models.Model):
