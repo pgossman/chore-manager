@@ -1,3 +1,4 @@
+import datetime
 import logging
 
 from django.http import HttpResponse, HttpResponseRedirect
@@ -6,8 +7,10 @@ from django.urls import reverse
 from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.files.storage import FileSystemStorage
 
-from .models import Chore, ChoreInstance, ChoreStatus
+from .forms import InstanceSubmissionForm
+from .models import Chore, ChoreInstance, ChoreStatus, Photo
 
 
 logger = logging.getLogger(__name__)
@@ -15,14 +18,21 @@ logger = logging.getLogger(__name__)
 
 @login_required
 def home(request):
-    open_instances = ChoreInstance.objects.filter(status=ChoreStatus.ASSIGNED)
+    open_instances = ChoreInstance.objects.filter(
+        user=request.user, status=ChoreStatus.ASSIGNED
+    )
     assignments = request.user.choreassignment_set.all()
-    recent_submissions = ChoreInstance.objects.filter(user=request.user).order_by(
-        "-id"
-    )[:10]
+    recent_submissions = (
+        ChoreInstance.objects.filter(user=request.user)
+        .exclude(status=ChoreStatus.ASSIGNED)
+        .order_by("-id")[:10]
+    )
+
+    f = InstanceSubmissionForm(request.user)
 
     context = {
         "user": request.user,
+        "f": f,
         "open_instances": open_instances,
         "assignments": assignments,
         "recent_submissions": recent_submissions,
@@ -34,18 +44,29 @@ def home(request):
 @login_required
 def submit_chore_instance(request):
     response = HttpResponseRedirect(reverse("home"))
-    if not request.POST:
+    if request.method != "POST":
         return response
 
-    if not ("instance" in request.POST):
-        logger.error("Failed to update chore, no instance id in POST")
-        messages.error(request, "Failed to update chore!")
+    form = InstanceSubmissionForm(request.user, request.POST)
+    if not form.is_valid():
+        logger.error("Failed to update chore, InstanceSubmissionForm object not valid")
+        messages.error(request, "Failed to update chore, form not valid!")
         return response
 
-    instance = get_object_or_404(ChoreInstance, pk=request.POST["instance"])
-    instance.notes = request.POST["notes"] or ""
+    data = form.cleaned_data
+    instance = data["instance"]
+    instance.notes = data["notes"] or ""
     instance.status = ChoreStatus.SUBMITTED
     instance.submission_date = timezone.now()
+
+    fs = FileSystemStorage()
+    for f in request.FILES.getlist("image"):
+        now = int(datetime.datetime.utcnow().timestamp())
+        filename = f"{instance.id}__{now}__{f.name}"
+        photo = Photo()
+        photo.instance = instance
+        photo.image.save(filename, f, True)
+
     instance.save()
 
     messages.success(

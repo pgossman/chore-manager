@@ -6,14 +6,30 @@
 <hr>
 
 <div>
+<h4>Your weekly chore schedule</h3>
+<ul>
+    {% for assignment in assignments %}
+    <li>
+       {{ assignment }}
+    </li>
+    {% endfor %}
+</ul>
+</div>
+
+<hr>
+
+<div>
 {% if open_instances %}
 <h4>Submit a chore</h3>
-    <form action="{% url 'submit_chore_instance' %}" method="post">
+    <form action="{% url 'submit_chore_instance' %}"
+            method="post"
+            enctype="multipart/form-data">
         {% csrf_token %}
 
         <div class="form-group">
-            <label for="instance" class="sr-only">Chore instance</label>
-            <select name="instance" id="instance" class="form-control">
+            <label for="id_instance" class="sr-only">Chore instance</label>
+            <select name="instance" id="id_instance" class="form-control">
+                <option value="">
                 {% for x in open_instances %}
                 <option value="{{ x.id }}">
                     {{ x }}
@@ -23,8 +39,13 @@
         </div>
 
         <div class="form-group">
-            <label for="notes" class="sr-only">Notes</label>
-            <input name="notes" id="notes" class="form-control" placeholder="Notes">
+            <label for="id_notes" class="sr-only">Notes</label>
+            <input name="notes" id="id_notes" class="form-control" placeholder="Notes">
+        </div>
+
+        <div class="form-group">
+            <label for="id_image" class="sr-only">Select images</label>
+            <input type="file" name="image" multiple="" accept="image/*" id="id_image">
         </div>
 
         <button type="submit" class="btn btn-primary">Submit</button>
@@ -33,23 +54,12 @@
 <h4>No chores available for submission</h4>
 {% endif %}
 </div>
-<hr>
 
-<div>
-<h4>Your weekly chore schedule</h3>
-<ul>
-    {% for assignment in assignments %}
-    <li>
-       {{ assignment }}
-    </li>
-    {% endfor %}
-</ul>
-    
-</div>
 <hr>
 
 <div>
 <h4>Recent submissions</h3>
+{% if recent_submissions %}
 <ul>
     {% for instance in recent_submissions %}
     <li>
@@ -57,6 +67,9 @@
     </li>
     {% endfor %}
 </ul>
+{% else %}
+<p>No chore submissions ever... maybe you should complete a chore :|</p>
+{% endif %}
     
 </div>
 <hr>

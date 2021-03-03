@@ -143,8 +143,8 @@ class ChoreInstance(models.Model):
 
 
 class Photo(models.Model):
-    filename = models.CharField(max_length=2000)
+    image = models.ImageField(null=True)
     instance = models.ForeignKey(ChoreInstance, on_delete=models.CASCADE)
 
     def __str__(self):
-        return filename
+        return self.image.name
