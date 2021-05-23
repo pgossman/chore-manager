@@ -7,7 +7,7 @@ import { Person } from 'src/app/Person';
   styleUrls: ['./task-item.component.css'],
 })
 export class TaskItemComponent implements OnInit {
-  @Input() task: Person;
+  @Input() person: Person;
   constructor() {}
 
   ngOnInit(): void {}
