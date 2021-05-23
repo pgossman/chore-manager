@@ -1,1 +1,13 @@
 <h1>{{ title }}</h1>
+<form class="name-form" (ngSubmit)="onSubmit()">
+  <div class="form-control">
+    <label for="name">Full Name: </label>
+    <input
+      type="text"
+      name="name"
+      [(ngModel)]="name"
+      id="name"
+      placeholder="Enter your name"
+    />
+  </div>
+</form>

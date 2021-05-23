@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { TaskService } from 'src/app/services/task.service';
 import { Person } from '../../Person';
 
@@ -9,9 +9,21 @@ import { Person } from '../../Person';
 })
 export class TasksComponent implements OnInit {
   people: Person[] = [];
+  @Input() person: Person;
+  me: Person;
   constructor(private taskService: TaskService) {}
 
   ngOnInit(): void {
-    this.taskService.getChores().subscribe((people) => (this.people = people));
+    this.taskService
+      .getAllChores()
+      .subscribe((people) => (this.people = people));
+  }
+
+  getMyChores(name: string) {
+    this.taskService
+      .getMyChores(name)
+      .subscribe(
+        () => (this.me = this.people.filter((t) => t.name === name)[0])
+      );
   }
 }

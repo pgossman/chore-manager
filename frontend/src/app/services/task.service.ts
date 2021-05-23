@@ -16,7 +16,13 @@ export class TaskService {
   private apiUrl = 'http://localhost:5000/people';
   constructor(private http: HttpClient) {}
 
-  getChores(): Observable<Person[]> {
+  getAllChores(): Observable<Person[]> {
     return this.http.get<Person[]>(this.apiUrl);
+  }
+
+  getMyChores(name: string): Observable<Person> {
+    // TODO: FIX URL, RETURNS EMPTY OBJ ATM
+    const url = `${this.apiUrl}/${name}`;
+    return this.http.get<Person>(url);
   }
 }
