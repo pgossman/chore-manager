@@ -1,3 +1,33 @@
 <div class="person">
   <h3>{{ person.name }}</h3>
+  <p>{{ person.chore1 }}</p>
+  <app-button
+    *ngIf="person.chore1"
+    text="Submit Image"
+    (btnClick)="submitTask()"
+  ></app-button>
+  <p>{{ person.chore2 }}</p>
+  <app-button
+    *ngIf="person.chore2"
+    text="Submit Image"
+    (btnClick)="submitTask()"
+  ></app-button>
+  <p>{{ person.chore3 }}</p>
+  <app-button
+    *ngIf="person.chore3"
+    text="Submit Image"
+    (btnClick)="submitTask()"
+  ></app-button>
+  <p>{{ person.chore4 }}</p>
+  <app-button
+    *ngIf="person.chore4"
+    text="Submit Image"
+    (btnClick)="submitTask()"
+  ></app-button>
+  <p>{{ person.chore5 }}</p>
+  <app-button
+    *ngIf="person.chore5"
+    text="Submit Image"
+    (btnClick)="submitTask()"
+  ></app-button>
 </div>

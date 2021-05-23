@@ -11,4 +11,8 @@ export class TaskItemComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {}
+
+  submitTask(): void {
+    console.log('submitted task');
+  }
 }
