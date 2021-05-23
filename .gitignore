@@ -3,5 +3,5 @@ worm_media/*
 .venv/*
 *__pycache__*
 db.sqlite3
-
+.idea/
 *.swp
